@@ -56,43 +56,28 @@ def main():
         if word == MOVE_CMD:
             t = Twist()
             t.linear.x = 1
-            t.linear.y = 0
-            t.linear.z = 0
-            t.angular.x = 0
-            t.angular.y = 0
-            t.angular.z = 0
             twist(t)
         elif word == LEFT_CMD:
             t = Twist()
-            t.linear.x = 0
-            t.linear.y = 0
-            t.linear.z = 0
-            t.angular.x = 0
-            t.angular.y = 0
-            t.angular.z = 0
+            t.angular.z = 1.56
             twist(t)
         elif word == RIGHT_CMD:
             t = Twist()
-            t.linear.x = 0
-            t.linear.y = 0
-            t.linear.z = 0
-            t.angular.x = 0
-            t.angular.y = 0
-            t.angular.z = 0
+            t.angular.z = -1.56
             twist(t)
         elif word == POS1_CMD:
             goal(POS1)
         elif word == POS2_CMD:
             goal(POS2)
-        elif word == STOP_CMD:
-            t = Twist()
-            t.linear.x = 0
-            t.linear.y = 0
-            t.linear.z = 0
-            t.angular.x = 0
-            t.angular.y = 0
-            t.angular.z = 0
-            twist(t)
+        # elif word == STOP_CMD:
+        #     t = Twist()
+        #     t.linear.x = 0
+        #     t.linear.y = 0
+        #     t.linear.z = 0
+        #     t.angular.x = 0
+        #     t.angular.y = 0
+        #     t.angular.z = 0
+        #     twist(t)
 
 
 if __name__=="__main__":
