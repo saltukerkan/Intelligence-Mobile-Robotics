@@ -45,7 +45,7 @@ def main():
     p4.pose.position.y = 0
     goals.append(p4)
 
-    rospy.Subscriber("/odom", Odometry, callback(data), queue_size=10)
+    rospy.Subscriber("/odom", Odometry, callback(data), queue_size=1)
 
     rate = rospy.Rate(10)
 
