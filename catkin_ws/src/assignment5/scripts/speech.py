@@ -3,8 +3,8 @@ import roslib
 roslib.load_manifest('ErkanS')
 import speech_recognition as sr
 import rospy
-from actionlib_msgs.msg import MoveBaseGoal, MoveBaseAction
-import actionlib_msgs
+from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
+import actionlib
 from geometry_msgs.msg import Twist
 
 POS1_CMD = "go to position 1"
@@ -26,8 +26,9 @@ POS2.target_pose.pose.position.y = -6.5
 POS2.target_pose.pose.position.z = -0.00143
 POS2.target_pose.pose.orientation.z = -0.00413
 
+pub = rospy.Publisher("mobile_base/commands/velocity", Twist, queue_size=10)
+
 def twist(t):
-    pub = rospy.Publisher("mobile_base/commands/velocity", Twist, queue_size=10)
     pub.publish(t)
 
 def goal(g):
@@ -55,15 +56,17 @@ def main():
         print(repr(word))
         if word == MOVE_CMD:
             t = Twist()
-            t.linear.x = 1
-            twist(t)
+            t.linear.x = 0.5
+	    for i in range(5):
+                twist(t)
+		rospy.sleep(0.5)
         elif word == LEFT_CMD:
             t = Twist()
-            t.angular.z = 1.56
+            t.angular.z = 3
             twist(t)
         elif word == RIGHT_CMD:
             t = Twist()
-            t.angular.z = -1.56
+            t.angular.z = -3
             twist(t)
         elif word == POS1_CMD:
             goal(POS1)
@@ -78,6 +81,7 @@ def main():
         #     t.angular.y = 0
         #     t.angular.z = 0
         #     twist(t)
+	print(word == LEFT_CMD)
 
 
 if __name__=="__main__":
