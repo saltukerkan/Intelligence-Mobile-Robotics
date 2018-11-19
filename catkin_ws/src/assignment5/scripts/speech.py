@@ -12,7 +12,11 @@ POS2_CMD = "go to position 2"
 MOVE_CMD = "move"
 LEFT_CMD = "left"
 RIGHT_CMD = "right"
+SHARP_LEFT_CMD = "sharp left"
+SHARP_RIGHT_CMD = "sharp right"
 STOP_CMD = "stop"
+BACK_CMD = "back"
+GOOD_BOY = "good boy"
 POS1 = MoveBaseGoal()
 POS1.target_pose.header.frame_id = 'map'
 POS1.target_pose.pose.position.x = -10
@@ -40,11 +44,11 @@ def main():
     rospy.init_node('speech')
 
 
+    word = ''
     while True:
         r = sr.Recognizer()
         with sr.Microphone() as source:
             audio = r.listen(source)
-        word = ''
         try:
             word =  r.recognize_google(audio)
         except sr.UnknownValueError:
@@ -60,27 +64,42 @@ def main():
 	    for i in range(5):
                 twist(t)
 		rospy.sleep(0.5)
-        elif word == LEFT_CMD:
+        elif word == SHARP_LEFT_CMD:
             t = Twist()
-            t.angular.z = 3
+            t.angular.z = 4
             twist(t)
-        elif word == RIGHT_CMD:
+        elif word == SHARP_RIGHT_CMD:
             t = Twist()
-            t.angular.z = -3
+            t.angular.z = -4
             twist(t)
         elif word == POS1_CMD:
             goal(POS1)
         elif word == POS2_CMD:
             goal(POS2)
-        # elif word == STOP_CMD:
-        #     t = Twist()
-        #     t.linear.x = 0
-        #     t.linear.y = 0
-        #     t.linear.z = 0
-        #     t.angular.x = 0
-        #     t.angular.y = 0
-        #     t.angular.z = 0
-        #     twist(t)
+	elif word == BACK_CMD:
+	    t= Twist()
+	    t.angular.z = 4
+	    twist(t)
+	    rospy.sleep(1)
+	    twist(t)
+	elif word == STOP_CMD:
+	    t = Twist()
+	    twist(t)
+	elif word == LEFT_CMD:
+	    t = Twist()
+            t.angular.z = 2
+            twist(t)
+	elif word == RIGHT_CMD:
+            t = Twist()
+            t.angular.z = -2
+            twist(t)
+	elif word == GOOD_BOY:
+	    t = Twist()
+            t.angular.z = 3
+	    for i in range(5):
+                twist(t)
+		rospy.sleep(0.5)  
+
 	print(word == LEFT_CMD)
 
 

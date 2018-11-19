@@ -1,0 +1,7 @@
+<launch>
+	<include
+		file = "$(find turtlebot_bringup)/launch/minimal.launch"
+	/>
+	
+	<node name="speech" pkg="ErkanS" type="speech.py" args="screen"/>
+</launch>
