@@ -1,0 +1,15 @@
+<launch>
+	<arg name="map" default="$(find ErkanS)/maps/saltuk_map.yaml" />
+	<include
+		file = "$(find turtlebot_bringup)/launch/minimal.launch"
+	/>
+	<!--	
+	<include file = "$(find turtlebot_rviz_launchers)/launch/view_navigation.launch">
+		<param name="map_file" value="$(arg map)" />
+	</include>
+	<include file = "$(find turtlebot_navigation)/launch/amcl_demo.launch">
+		<param name="map_file" value="$(arg map)"/>
+	</include>
+-->
+	<node name="speech" pkg="ErkanS" type="speech.py" args="screen"/>
+</launch>
