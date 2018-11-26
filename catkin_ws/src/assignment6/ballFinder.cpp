@@ -5,7 +5,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <math.h>
-#include <std_msgs/String.h>
+#include "std_msgs/String.h"
 #include <string>
 
 static const std::string OPENCV_WINDOW = "Image window";
@@ -30,9 +30,9 @@ public:
     image_sub_ = it_.subscribe("/usb_cam/image_raw", 10,
       &ImageConverter::imageCb, this);
     // image_pub_ = it_.advertise("/image_converter/output_video", 10);
-    pixel_pub = it_.advertise<std_msgs::String>("/ball/location");
-    depth_pub = it_.advertise<std_msgs::String>("/ball/depth");
-    depth = it_.subscribe("/camera/depth/image_raw", 10, &imageConverter::ballDist , this);
+    pixel_pub = nh_.advertise<std_msgs::String>("/ball/location", 10);
+    depth_pub = nh_.advertise<std_msgs::String>("/ball/depth", 10);
+    depth = it_.subscribe("/camera/depth/image_raw", 10, &ImageConverter::ballDist , this);
     row = 0;
     col = 0;
 
@@ -45,21 +45,31 @@ public:
   }
 
   void ballDist(const sensor_msgs::ImageConstPtr& msg){
-    cv_bridge::CvImagePtr cv_ptr;
+    cv_bridge::CvImageConstPtr cv_ptr;
     try
     {
       cv_ptr = cv_bridge::toCvShare(msg);
+      double max = 0.0;
+
+      cv::minMaxLoc(cv_ptr->image, 0, &max, 0, 0);
+      cv::Mat normalized;
+      cv_ptr->image.convertTo(normalized, CV_32F, 1.0/max, 0)  ;
+
+      cv::imshow("foo", normalized);
+      cv::waitKey(1);
+
     }
     catch (cv_bridge::Exception& e)
     {
       ROS_ERROR("cv_bridge exception: %s", e.what());
       return;
     }
-    int dist = cv_ptr->image.at<int>(row,col)
-
-    std_msgs::String msg;
-    msg.data = std::to_string(dist);
-    depth_pub.publish(msg);
+    int dist = cv_ptr->image.at<float>(row,col);
+    std::stringstream ss;
+    ss << dist;
+    std_msgs::String m;
+    m.data = ss.str();
+    depth_pub.publish(m);
   }
 
   void imageCb(const sensor_msgs::ImageConstPtr& msg)
@@ -121,7 +131,15 @@ public:
     //
 
     std_msgs::String pixels;
-    pixels.data = std::to_string(row) + "," + std::to_string(col) + "," + std::to_string(cv_ptr->image.rows) + "," + std::to_string(cv_ptr->image.cols);
+    std::stringstream r;
+    r << row;
+    std::stringstream rs;
+    rs << cv_ptr->image.rows;
+    std::stringstream c;
+    c << col;
+    std::stringstream cs;
+    cs << cv_ptr->image.cols;
+    pixels.data = r.str() + "," + c.str() + "," + rs.str() + "," + cs.str();
     pixel_pub.publish(pixels);
   }
 };
